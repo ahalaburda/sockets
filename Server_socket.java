@@ -20,8 +20,7 @@ class Server_socket{
           String clientSentence,clientpassword;
           String capitalizedSentence;
           ServerSocket welcomeSocket = new ServerSocket(22);
-          Connection con = null;
-          String url = "jdbc:mysql://localhost:3306/redes_development";
+          String url = "jdbc:mysql://localhost:3306/redes";
           String db = "redes";
           String driver ="com.mysql.jdbc.Driver";
           String user = "root";
@@ -46,13 +45,13 @@ class Server_socket{
                 
                 //load jdbc driver for mysql database
                 try {
-                  Class.forName("com.mysql.jdbc.Driver");
+                  Class.forName("org.gjt.mm.mysql.Driver");
                 }catch(Exception e) {
                   System.out.println("Unable to load Driver");
                 }
 
              try {
-                 connection = DriverManager.getConnection(url, user, pass);
+                 connection = (Connection) DriverManager.getConnection(url, user, pass);
                  System.out.println("Conexion realizada");
                 } catch (SQLException e) {
                   System.out.println("Unable to connect to database");
@@ -60,16 +59,18 @@ class Server_socket{
                 //if connection is successfully established, create statement
                  if(connection != null) {
                     try {
-                      Statement statement = connection.createStatement();
+                      System.out.println("estas en el try, pide lo que quieras!!!!");
+                      statement = connection.createStatement();
                     } catch (SQLException e) {
                        System.out.println("Unable to create statement");
                     }
                 }
-                  
                 //if statement is created successfully, execute query and get results
+                
               if(statement != null) {
                  try {
-                     res = statement.executeQuery("SELECT * FROM  users WHERE email='clientSentence'");
+                  System.out.println("intentando hacer un select!!!");
+                     resultSet = statement.executeQuery("SELECT * FROM  users");
                    } catch (SQLException e) {
                         System.out.println("Unable to create statement");
                    }
@@ -80,19 +81,21 @@ class Server_socket{
              // Class.forName(driver).newInstance();
              
   
-             while (res.next()) { 
-                String u = res.getString("email");
-                // String p = res.getString("encrypted_password");
+             while (resultSet.next()) { 
+                String u = resultSet.getString("username");
+                // String p = resultSet.getString("encrypted_password");
                 // if (clientSentence.equals(u) && clientpassword.equals(p)){
                 if (clientSentence.equals(u)){
-                    capitalizedSentence = "Welcome "+clientSentence+" \n";
-                    outToClient.writeBytes(capitalizedSentence); 
+                    //capitalizedSentence = "Welcome "+clientSentence+" \n";
+                    //outToClient.writeBytes(capitalizedSentence); 
+                  System.out.println(u);
                 }else{  
-                    capitalizedSentence = "Sorry, not authorized \n";
-                    outToClient.writeBytes(capitalizedSentence); 
+                  System.out.println("no se puede retornar al cliente");
+                    //capitalizedSentence = "Sorry, not authorized \n";
+                    //outToClient.writeBytes(capitalizedSentence); 
                 }    
           }
-             con.close();
+             connection.close();
         }
           
        }
