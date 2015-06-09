@@ -23,12 +23,14 @@ class TCPclient{
     String sentence,sentence1;
     String modifiedSentence;
     
-    Socket clientSocket = new Socket("localhost", 22);
+    Socket clientSocket = new Socket(argv[0], Integer.parseInt(argv[1]));
    
     BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
     BufferedReader inFromUser1 = new BufferedReader( new InputStreamReader(System.in));
 
     Console console = System.console();
+
+     System.out.println("Conexion establecida con Exito!!!");
       String username = console.readLine("Enter your username :");
       char pswd[] = console.readPassword("Enter your Password :");
       String upwd=new String(pswd);
