@@ -17,6 +17,7 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 
 
+
 /**
  *
  * @author Usuario1
@@ -44,7 +45,7 @@ public class JsonReader {
  public static void main(String[] args) throws IOException, JSONException {
      
     JSONObject json = readJsonFromUrl("http://localhost:3000/marcas.json");
-    System.out.println(json.toString());
+    System.out.println(json.toString());  
     System.out.println(json.get("descripcion"));
 }
 }

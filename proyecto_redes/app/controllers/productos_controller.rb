@@ -6,6 +6,9 @@ class ProductosController < ApplicationController
   # GET /productos.json
   def index
     @productos = Producto.all
+    respond_to do |format|
+     format.xml { render xml: @productos}
+    end
   end
 
   # GET /productos/1
