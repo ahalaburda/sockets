@@ -14,89 +14,91 @@ import java.net.Socket;
 import java.io.File;
 import java.sql.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import org.json.*;
+import 
 
 class Server_socket{ // java ProxyServer <puerto> <Usuario> <contraseña>
     public static void main(String argv[]) throws Exception{
-          String clientSentence,clientpassword;
-          String capitalizedSentence;
-          ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
-          String url = "jdbc:mysql://localhost:3306/redes";
-          String db = "redes";
-          String driver ="com.mysql.jdbc.Driver";
-          String user = "root";
-          String pass = "";
+
+          int puerto = Integer.parseInt(argv[0]);
+          String username = argv[1];
+          String password = argv[2];
+          String clientformat;
+          String clientdata;
+          String clientresult;
+          String clientresource;
+          String url_login = "http://localhost:3000/users/sign_in";
+
+          ServerSocket welcomeSocket = new ServerSocket(puerto);
+
+          HttpClient httpClient = new DefaultHttpClient();
+          HttpPost httpPost = new HttpPost(url_login);
+
+  
+              // Add your data
+              List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+              // nameValuePairs.add(new BasicNameValuePair("utf8", Character.toString('\u2713')));
+              nameValuePairs.add(new BasicNameValuePair("username", username));
+              nameValuePairs.add(new BasicNameValuePair("password", password));
+              // nameValuePairs.add(new BasicNameValuePair("commit", "Sign in"));
+              httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+              // Execute HTTP Post Request
+              HttpResponse response = httpClient.execute(httpPost);
+              String ret = EntityUtils.tostring(response.getEntity());
+               System.out.println(ret);
+
 
           while(true){
-             Socket connectionSocket = welcomeSocket.accept();
-             
-             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-             //BufferedReader inFromClient1 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-             
-             DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-             //clientSentence = inFromClient.readLine(); 
-             //clientpassword = inFromClient.readLine();
-             
-             System.out.println("Received User Name: " + argv[1]);
-             //System.out.println("Received Password: " + clientpassword);
+            Socket connectionSocket = welcomeSocket.accept();
 
-                Connection connection = null;
-                Statement statement = null;
-                ResultSet resultSet = null;
-                
-                //load jdbc driver for mysql database
-                try {
-                  Class.forName("org.gjt.mm.mysql.Driver");
-                }catch(Exception e) {
-                  System.out.println("Unable to load Driver");
-                }
+            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+            BufferedReader inFromClient1 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+            BufferedReader inFromClient2 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+            BufferedReader inFromClient3 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 
-             try {
-                 connection = (Connection) DriverManager.getConnection(url, user, pass);
-                 System.out.println("Conexion realizada");
-                } catch (SQLException e) {
-                  System.out.println("Unable to connect to database");
-                }  
-                //if connection is successfully established, create statement
-                 if(connection != null) {
-                    try {
-                      System.out.println("estas en el try, pide lo que quieras!!!!");
-                      statement = connection.createStatement();
-                    } catch (SQLException e) {
-                       System.out.println("Unable to create statement");
-                    }
-                }
-                //if statement is created successfully, execute query and get results
+            clientformat = inFromClient.readLine();
+            clientdata = inFromClient1.readLine();
+            clientresult = inFromClient2.readLine();
+            clientresource = inFromClient3.readLine();
+
+            System.out.println("FORMAT: " + clientformat);
+            System.out.println("DATA: " + clientdata);
+            System.out.println("RESULT: " + clientresult);
+            System.out.println("RESOURCE: " + clientresource);
+
+              String url = "http://localhost:3000/"+clientresource+"/"+clientdata+"."+clientformat;
+
+              try (InputStream is = new URL(url).openStream()) {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
                 
-              if(statement != null) {
-                 try {
-                  System.out.println("intentando hacer un select!!!");
-                     resultSet = statement.executeQuery("SELECT * FROM  users");
-                   } catch (SQLException e) {
-                        System.out.println("Unable to create statement");
-                   }
+                StringBuilder sb = new StringBuilder();
+                int cp;
+                while ((cp = rd.read()) != -1) {
+                  sb.append((char) cp);
+                }
+                String stb =sb.toString();
+
+                String output = null;
+                String jsonText = stb;
+                
+                output = jsonText.replace("[", "").replace("]", "");
+                JSONObject json = new JSONObject(output);
+                System.out.println(json.toString());  
+                
               }
 
-
-             
-             // Class.forName(driver).newInstance();
-             
-  
-             while (resultSet.next()) { 
-                String u = resultSet.getString("username");
-                // String p = resultSet.getString("encrypted_password");
-                // if (clientSentence.equals(u) && clientpassword.equals(p)){
-                //if (clientSentence.equals(u)){
-                    //capitalizedSentence = "Welcome "+clientSentence+" \n";
-                    //outToClient.writeBytes(capitalizedSentence); 
-                  System.out.println(u);
-                //}else{  
-                  //System.out.println("no se puede retornar al cliente");
-                    //capitalizedSentence = "Sorry, not authorized \n";
-                    //outToClient.writeBytes(capitalizedSentence); 
-                }    
-          //}
-             connection.close();
-        }
-          
-       }
+             connectionSocket.close();
+          }
+        } 
 }

@@ -20,29 +20,41 @@ import java.util.Scanner;
 
 class TCPclient{ // java Client <serverIp> <puerto>
   public static void main(String argv[]) throws Exception{
-    String sentence,sentence1;
-    String modifiedSentence;
+
+    String response;
+
+    String direccion = argv[0];
+    int puerto = Integer.parseInt(argv[1]);
     
-    Socket clientSocket = new Socket(argv[0], Integer.parseInt(argv[1]));
+    Socket clientSocket = new Socket(direccion, puerto);
    
     BufferedReader inFromUser = new BufferedReader( new InputStreamReader(System.in));
-    //BufferedReader inFromUser1 = new BufferedReader( new InputStreamReader(System.in));
+
+    BufferedReader inFromUser1 = new BufferedReader( new InputStreamReader(System.in));
+    BufferedReader inFromUser2 = new BufferedReader( new InputStreamReader(System.in));
+    BufferedReader inFromUser3 = new BufferedReader( new InputStreamReader(System.in));
+
 
     Console console = System.console();
+    System.out.println("Conexion establecida con Exito!!!");
 
-     System.out.println("Conexion establecida con Exito!!!");
-     String pedido = console.readLine();
-      //String username = console.readLine("Enter your username :");
-      //char pswd[] = console.readPassword("Enter your Password :");
-      //String upwd=new String(pswd);
-      DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-      //DataOutputStream outToServer1 = new DataOutputStream(clientSocket.getOutputStream());
-        outToServer.writeBytes(pedido + '\n');
-        //outToServer1.writeBytes(upwd + '\n');
+    String format = console.readLine("FORMAT:");
+    String data = console.readLine("DATA:");
+    String result = console.readLine("RESULT:");
+    String resource = console.readLine("RESOURCE:");
+
+    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+    DataOutputStream outToServer1 = new DataOutputStream(clientSocket.getOutputStream());
+    DataOutputStream outToServer2 = new DataOutputStream(clientSocket.getOutputStream());
+    DataOutputStream outToServer3 = new DataOutputStream(clientSocket.getOutputStream());
+      outToServer.writeBytes(format + '\n');
+      outToServer.writeBytes(data + '\n');
+      outToServer.writeBytes(result + '\n');
+      outToServer.writeBytes(resource + '\n');
 
     BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));       
-    modifiedSentence = inFromServer.readLine();
-    System.out.println("FROM SERVER: " + modifiedSentence);
+    response = inFromServer.readLine();
+    System.out.println(response);
       
     clientSocket.close();
     }
