@@ -15,11 +15,11 @@ import java.io.File;
 import java.sql.*;
 
 
-class Server_socket{
+class Server_socket{ // java ProxyServer <puerto> <Usuario> <contraseña>
     public static void main(String argv[]) throws Exception{
           String clientSentence,clientpassword;
           String capitalizedSentence;
-          ServerSocket welcomeSocket = new ServerSocket(22);
+          ServerSocket welcomeSocket = new ServerSocket(Integer.parseInt(argv[0]));
           String url = "jdbc:mysql://localhost:3306/redes";
           String db = "redes";
           String driver ="com.mysql.jdbc.Driver";
@@ -30,14 +30,14 @@ class Server_socket{
              Socket connectionSocket = welcomeSocket.accept();
              
              BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-             BufferedReader inFromClient1 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+             //BufferedReader inFromClient1 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
              
              DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-             clientSentence = inFromClient.readLine(); 
-             clientpassword = inFromClient.readLine();
+             //clientSentence = inFromClient.readLine(); 
+             //clientpassword = inFromClient.readLine();
              
-             System.out.println("Received User Name: " + clientSentence);
-             System.out.println("Received Password: " + clientpassword);
+             System.out.println("Received User Name: " + argv[1]);
+             //System.out.println("Received Password: " + clientpassword);
 
                 Connection connection = null;
                 Statement statement = null;
@@ -85,16 +85,16 @@ class Server_socket{
                 String u = resultSet.getString("username");
                 // String p = resultSet.getString("encrypted_password");
                 // if (clientSentence.equals(u) && clientpassword.equals(p)){
-                if (clientSentence.equals(u)){
+                //if (clientSentence.equals(u)){
                     //capitalizedSentence = "Welcome "+clientSentence+" \n";
                     //outToClient.writeBytes(capitalizedSentence); 
                   System.out.println(u);
-                }else{  
-                  System.out.println("no se puede retornar al cliente");
+                //}else{  
+                  //System.out.println("no se puede retornar al cliente");
                     //capitalizedSentence = "Sorry, not authorized \n";
                     //outToClient.writeBytes(capitalizedSentence); 
                 }    
-          }
+          //}
              connection.close();
         }
           
