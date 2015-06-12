@@ -7,7 +7,9 @@ class ProductosController < ApplicationController
   def index
     @productos = Producto.all
     respond_to do |format|
-     format.xml { render xml: @productos}
+      format.html # show.html.erb
+      format.xml  { render :xml => @productos }
+      format.json { render :json => @productos }
     end
   end
 
