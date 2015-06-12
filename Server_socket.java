@@ -25,7 +25,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import org.json.*;
-import org.apache.http.*;
+
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 
 
 class Server_socket{ // java ProxyServer <puerto> <Usuario> <contraseña>
