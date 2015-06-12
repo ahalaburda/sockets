@@ -25,7 +25,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import org.json.*;
-import 
+import org.apache.http.*;
+
 
 class Server_socket{ // java ProxyServer <puerto> <Usuario> <contraseña>
     public static void main(String argv[]) throws Exception{
