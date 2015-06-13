@@ -24,17 +24,21 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import org.json.*;
+import java.util.*;
+import org.json.JSONObject;
+import org.json.JSONException;
 
-import org.apache.commons.httpclient.*;
+/*import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;*/
 
-class Server_socket{
+
+class Server_socket{ // java ProxyServer <puerto> <Usuario> <contraseña>
     public static void main(String argv[]) throws Exception{
+
           int puerto = Integer.parseInt(argv[0]);
-          String username = argv[1];
-          String password = argv[2];
+          //String username = argv[1];
+          //String password = argv[2];
           String clientformat;
           String clientdata;
           String clientresult;
@@ -43,7 +47,7 @@ class Server_socket{
 
           ServerSocket welcomeSocket = new ServerSocket(puerto);
 
-          HttpClient httpClient = new DefaultHttpClient();
+          /*HttpClient httpClient = new DefaultHttpClient();
           HttpPost httpPost = new HttpPost(url_login);
 
   
@@ -61,26 +65,25 @@ class Server_socket{
                System.out.println(ret);
 
 
-          while(true){
+*/          while(true){
             Socket connectionSocket = welcomeSocket.accept();
 
             BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+             clientformat = inFromClient.readLine();
+             System.out.println("FORMAT: " + clientformat);
             BufferedReader inFromClient1 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-            BufferedReader inFromClient2 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-            BufferedReader inFromClient3 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-
-            clientformat = inFromClient.readLine();
             clientdata = inFromClient1.readLine();
-            clientresult = inFromClient2.readLine();
+             System.out.println("DATA: " + clientdata);
+            BufferedReader inFromClient2 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+             clientresult = inFromClient2.readLine();
+             System.out.println("RESULT: " + clientresult);
+            BufferedReader inFromClient3 = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
             clientresource = inFromClient3.readLine();
-
-            System.out.println("FORMAT: " + clientformat);
-            System.out.println("DATA: " + clientdata);
-            System.out.println("RESULT: " + clientresult);
             System.out.println("RESOURCE: " + clientresource);
+            System.out.println("no pasas de aqui"); 
 
               String url = "http://localhost:3000/"+clientresource+"/"+clientdata+"."+clientformat;
-
+              System.out.println(url); 
               try (InputStream is = new URL(url).openStream()) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
                 
@@ -90,15 +93,21 @@ class Server_socket{
                   sb.append((char) cp);
                 }
                 String stb =sb.toString();
+                System.out.println("estas aqui"); 
 
                 String output = null;
                 String jsonText = stb;
                 
                 output = jsonText.replace("[", "").replace("]", "");
                 JSONObject json = new JSONObject(output);
+
                 System.out.println(json.toString());  
+                System.out.println("llegaste al final"); 
+                DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+              outToClient.writeBytes(json.toString());
                 
               }
+              
 
              connectionSocket.close();
           }
