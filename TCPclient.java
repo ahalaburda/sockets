@@ -38,19 +38,25 @@ class TCPclient{ // java Client <serverIp> <puerto>
     Console console = System.console();
     System.out.println("Conexion establecida con Exito!!!");
 
-    String format = console.readLine("FORMAT:");
-    String data = console.readLine("DATA:");
-    String result = console.readLine("RESULT:");
-    String resource = console.readLine("RESOURCE:");
-
+   
+    
+    
+    
+     String format = console.readLine("FORMAT:");
     DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+     outToServer.writeBytes(format + '\n');
+     String data = console.readLine("DATA:");
     DataOutputStream outToServer1 = new DataOutputStream(clientSocket.getOutputStream());
+    outToServer1.writeBytes(data + '\n');
+    String result = console.readLine("RESULT:");
     DataOutputStream outToServer2 = new DataOutputStream(clientSocket.getOutputStream());
+     outToServer2.writeBytes(result + '\n');
+     String resource = console.readLine("RESOURCE:");
     DataOutputStream outToServer3 = new DataOutputStream(clientSocket.getOutputStream());
-      outToServer.writeBytes(format + '\n');
-      outToServer.writeBytes(data + '\n');
-      outToServer.writeBytes(result + '\n');
-      outToServer.writeBytes(resource + '\n');
+      outToServer3.writeBytes(resource + '\n');
+      
+     
+     
 
     BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));       
     response = inFromServer.readLine();
